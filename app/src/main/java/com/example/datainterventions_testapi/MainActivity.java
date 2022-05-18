@@ -3,6 +3,10 @@ package com.example.datainterventions_testapi;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,11 +17,13 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class MainActivity extends AppCompatActivity {
+    JSONArray jsonArray = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new GetAllTasks().execute();
     }
 
     private class GetAllTasks extends AsyncTask<String, Integer, String>{
@@ -30,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-
             // 1-- make connection with db (web service)
             try {
                 URL url = new URL("http://10.0.2.2/Datainterventions_API/getInterventions.php");
@@ -41,11 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 String ligne;
                 while((ligne = bufferedReader.readLine()) != null){
 
-
+                    jsonArray = new JSONArray(ligne);
                 }
+
+                Log.d("result", jsonArray.toString());
             }catch(MalformedURLException e){
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             /// 2-- convert data from json array to java objects
